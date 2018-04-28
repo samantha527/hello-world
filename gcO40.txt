@@ -1,0 +1,79 @@
+
+For LF, the nodes are ordered
+5 39 0 15 16 25 1 26 2 4 8 18 20 30 34 35 
+38 6 10 12 13 19 21 24 33 3 17 27 36 11 22 23 
+28 9 14 29 32 37 7 31 
+
+LF used 6 colors.
+
+Nodes were colored as follows.
+Color 0: 5 16 20 21 29 37 39 
+Color 1: 0 4 10 15 25 31 32 36 
+Color 2: 1 6 8 12 18 23 26 35 
+Color 3: 2 3 11 22 24 34 38 
+Color 4: 7 13 17 19 27 30 
+Color 5: 9 14 28 33 
+Hit enter to continue.
+
+For SL, the nodes are ordered
+0 16 18 2 26 3 30 39 15 34 5 13 25 8 21 4 
+6 17 19 1 27 35 20 22 23 38 10 11 24 33 12 14 
+29 36 28 32 37 9 7 31 
+
+SL used 6 colors.
+
+Nodes were colored as follows.
+Color 0: 0 2 4 9 20 22 27 29 31 38 
+Color 1: 3 8 10 13 14 15 16 24 
+Color 2: 5 18 21 26 33 35 
+Color 3: 6 7 12 25 28 30 
+Color 4: 1 17 23 32 34 39 
+Color 5: 11 19 36 37 
+Hit enter to continue.
+
+For SLI, the nodes were initially ordered
+0 16 18 2 26 3 30 39 15 34 5 13 25 8 21 4 
+6 17 19 1 27 35 20 22 23 38 10 11 24 33 12 14 
+29 36 28 32 37 9 7 31 
+We will print the nodes that benefited from the swap.
+Node 39 benefited and was colored not Color 4 but rather Color 0
+Node 19 benefited and was colored not Color 5 but rather Color 1
+Node 38 benefited and was colored not Color 5 but rather Color 2
+Node 10 benefited and was colored not Color 5 but rather Color 1
+Node 36 benefited and was colored not Color 5 but rather Color 3
+
+SLI used 5 colors.
+
+Nodes were colored as follows.
+Color 0: 1 2 7 12 17 23 34 39 
+Color 1: 3 8 9 10 13 14 15 22 24 31 
+Color 2: 11 18 19 21 26 32 35 38 
+Color 3: 0 4 20 25 27 30 36 37 
+Color 4: 5 6 16 28 29 33 
+Hit enter to continue.
+
+In RLF method. We print each stage's nodes.
+Starting stage 0
+First node colored has id 5
+20 33 26 25 4 30 6 28 37 
+Starting stage 1
+First node colored has id 0
+22 2 27 17 29 7 11 32 
+Starting stage 2
+First node colored has id 39
+12 23 10 16 34 24 
+Starting stage 3
+First node colored has id 18
+9 1 15 13 8 14 
+Starting stage 4
+First node colored has id 3
+19 21 31 35 36 38 
+
+RLF used 5 colors.
+
+Nodes were colored as follows.
+Color 0: 4 5 6 20 25 26 28 30 33 37 
+Color 1: 0 2 7 11 17 22 27 29 32 
+Color 2: 10 12 16 23 24 34 39 
+Color 3: 1 8 9 13 14 15 18 
+Color 4: 3 19 21 31 35 36 38 

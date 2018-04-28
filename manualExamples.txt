@@ -1,0 +1,681 @@
+Graph Coloring Algorithms
+
+Our example graph has six nodes
+
+A, B, C, D, E, F
+
+and nine edges
+
+{A,B}, {A,C}, {A,D}, {B,C}, {C,D}, {C,E}, {D,E}, {D,F}, {E,F}
+
+It looks like
+
+
+        A -------- D -------- F
+       / \        / \        /
+      /   \      /   \      /
+     /     \    /     \    /
+    /       \  /       \  /
+   B ------- C -------- E
+
+
+SEQUENTIAL ASSIGNMENT WITH A RANDOM INITIAL ORDERING
+====================================================
+
+We illustrate sequential assignment for the nodes in the sequence
+
+A, B, C, F, D, E
+	
+We show the state of the computation by listing below each set the
+set of colors assigned to nodes adjacent to it, and above each node 
+the color has been assigned.  Initially, none has been assigned a color
+so all the sets are empty.
+
+A,        B,        C,        F,        D,        E
+{}        {}        {}        {}        {}        {}
+
+A is considered first and assigned 0, since that is the smallest
+color value(recall, the colors are the nonnegative integers), not
+in the set of colors of nodes adjacent to A. That changes the sets
+for all the nodes adajacent to A.
+
+0
+A,        B,        C,        F,        D,        E
+{}        {0}       {0}       {}        {0}       {}
+
+Next, B is considered, assigned 1, which modies the sets of nodes
+adjacent to B.
+
+0         1
+A,        B,        C,        F,        D,        E
+{1}       {0}       {0,1}     {}        {0}       {}
+
+
+Next, C is considered, assigned 2, and that changes the sets as
+follows.
+
+0         1         2
+A,        B,        C,        F,        D,        E
+{1,2}     {0,2}     {0,1}     {}        {0,2}     {2}
+
+Next, F is considered, yielding
+
+0         1         2         0
+A,        B,        C,        F,        D,        E
+{1,2}     {0,2}     {0,1}     {}        {0,2}     {0,2}
+
+Next, D is considered, yielding
+
+0         1         2         0         1 
+A,        B,        C,        F,        D,        E
+{1,2}     {0,2}     {0,1}     {1}       {0,2}     {0,1,2}
+
+Finally, E is considered, so the result is
+
+0         1         2         0         1         3
+A,        B,        C,        F,        D,        E
+{1,2}     {0,2}     {0,1,3}   {1,3}     {0,2,3}   {0,1,2}
+
+which is not optimal, since it took four colors and this graph
+can be colored with three colors.
+
+LF
+==
+
+We will treat the node labels as their id's and use dictionary order
+to order them.  Note the degrees are as follows.
+
+Node Degree of node
+A    3 
+B    2   
+C    4
+D    4
+E    3
+F    2
+
+The LF algorithm puts nodes with higher degree ahead of nodes with
+lower degree, and use the id to break ties.  It would order these 
+nodes
+
+C, D, A, E, B, F
+
+We will just show the results of each assignment in the sequential
+assignment algorithm.  Initially, no node is assigned a color.
+
+C,        D,        A,        E,        B,        F
+{}        {}        {}        {}        {}        {}
+
+First, C.
+
+0    
+C,        D,        A,        E,        B,        F
+{}        {0}       {0}       {0}       {0}       {}
+
+
+Next, D.
+
+0         1  
+C,        D,        A,        E,        B,        F
+{1}       {0}       {0,1}     {0,1}     {0}       {1}
+
+Next, A.
+
+0         1         2
+C,        D,        A,        E,        B,        F
+{1,2}     {0,2}     {0,1}     {0,1}     {0,2}     {1}
+
+Next, E.
+
+0         1         2         2
+C,        D,        A,        E,        B,        F
+{1,2}     {0,2}     {0,1}     {0,1}     {0,2}     {1,2}
+
+Next, B.
+
+0         1         2         2         1
+C,        D,        A,        E,        B,        F
+{1,2}     {0,2}     {0,1}     {0,1}     {0,2}     {1,2}
+
+Finally, F.
+
+0         1         2         2         1         0
+C,        D,        A,        E,        B,        F
+{1,2}     {0,2}     {0,1}     {0,1}     {0,2}     {1,2}
+
+So LF uses only three colors and improves on the previous assignment.
+
+SL
+==
+
+The SL algorithm is like LF, except that it sorts from the maximum/last node 
+in the ordering to the first node, and DYNAMICALLY CHANGES THE DEGREE OF THE 
+UNSORTED NODES BY SUBTRACTING 1 FROM ALL NODES ADJACENT TO A NEWLY SORTED NODE.
+
+We will illustrate the sort, then just give what the sequential assignment steps.
+Our initial degrees are
+
+A    3 
+B    2   
+C    4
+D    4
+E    3
+F    2
+
+So, the maximum is F, since it has the lowest degree, 2, and a larger id than
+B, which also has 2.  F is placed last
+
+F
+
+and its adjacent nodes, D and E, have their degrees (in your implementation, 
+use the unsortedAdjCount data member) reduced
+
+A    3 
+B    2   
+C    4
+D    3
+E    2
+F    2
+
+So, of the remaining nodes, E is the maximum, since it has degree 2 and its id is > B.
+
+E, F
+
+The degrees of the nodes adjacent to E, C, D, and F,  are reduced
+
+A    3 
+B    2   
+C    3
+D    2
+E    2
+F    1
+
+Now, D is the maximum of the unsorted nodes, so it is added next
+
+D, E, F
+
+and the degrees of its adjacent nodes, A, C, E, and F, reduced by one
+
+A    2 
+B    2   
+C    2
+D    2
+E    1
+F    0
+
+C is the maximum of the unplaced nodes, so it is added next
+
+C, D, E, F
+
+reducing the degrees of A, B, D, and E
+
+A    1 
+B    1   
+C    2
+D    1
+E    0
+F    0
+
+so now B is maximum of the unplaced nodes (just A and B now) and added
+
+B, C, D, E, F
+
+reducing the degrees of A and C
+
+A    0 
+B    1   
+C    1
+D    1
+E    0
+F    0
+
+There is no choice but to add A, and since it is the last
+node, we don't bother to change the degrees.  The final ordering
+is 
+
+A, B, C, D, E, F
+
+The sequential assignment algorithm would go as follows.
+Initially,
+
+A,        B,        C,        D,        E,        F
+{}        {}        {}        {}        {}        {}
+
+A,
+
+
+0
+A,        B,        C,        D,        E,        F
+{}        {0}       {0}       {0}       {}        {}
+
+B,
+
+0         1
+A,        B,        C,        D,        E,        F
+{1}       {0}       {0,1}     {0}       {}        {}
+
+
+C,
+
+0         1         2
+A,        B,        C,        D,        E,        F
+{1,2}     {0,2}     {0,1}     {0,2}     {2}       {}
+
+D,
+
+0         1         2         1
+A,        B,        C,        D,        E,        F
+{1,2}     {0,2}     {0,1}     {0,2}     {1,2}     {1}
+
+E,
+
+0         1         2         1         0
+A,        B,        C,        D,        E,        F
+{1,2}     {0,2}     {0,1}     {0,2}     {1,2}     {0,1}
+
+Finally, F,
+
+0         1         2         1         0         2
+A,        B,        C,        D,        E,        F
+{1,2}     {0,2}     {0,1}     {0,2}     {1,2}     {0,1}
+
+Note that is is different from the LF result, but still optimal.
+
+SLI
+===
+
+The SLI proceeds like SL, except that as the sequential assignment
+proceeds, every time it appears to be forced to use a new largest color
+k > 1 for the first time, it considers all all pairs (i,j) with
+0 <= i < j < k to see if swapping the colors i and j within the connected
+components reachable from the node v that generated the need for color
+k can avoid using k.
+
+So we start with the SL ordering and in look at the first time it 
+appears we need to use 2.  The coloring prior to that is
+
+
+0         1
+A,        B,        C,        D,        E,        F
+{1}       {0}       {0,1}     {0}       {}        {}
+
+Our only (i,j) pair for k = 2 is (0,1).  We calculate the connected
+components of the graph induced by including just the nodes colored
+0 and 1 that contain a node colored 0 that is adjacent to the problem
+node, C.  There is only one connected component,
+
+{ A, B }
+
+with A colored 0 and adjacent to C, and B colored 1.  Note A is connected
+to B, so they are in the same connected component.  Unfortunately, 
+C is adjacent to B as well as to A, so exchanging the colors 0 and 1
+in { A, B } would still leave C adjacent to a node colored 0 and also a
+node colored 1.  As soon as you detect such a connected component, you
+can stop the search, since it dooms the particular (i,j) pair to failure.
+The interchange can only eliminate the need for the next color k to be
+used if there is NO connected component that contains both a node x 
+colored i and a node y colored j with both adjacent to the problem node v.
+
+In this example, we only could try (0,1), and it fails, so we have to
+color C with 2.  Then no later node uses a larger color, so the final
+coloring is the same.
+
+To illustrate how the interchange can work, consider the point in our
+color assignment for our first ordering
+
+A, B, C, F, D, E
+
+When we first have to use 2 for C, we would again discover that it cannot
+be avoided, and the next time we looked for a change would be when we
+have to assign 3 for E.  The assignment up to that point is
+
+0         1         2         0         1 
+A,        B,        C,        F,        D,        E
+
+E is adjacent to C, D, and F, so it looks like we have to use 3 for the
+first time.  That gives us three (i,j) pairs to try, (0,1), (0,2), and (1,2).
+
+If we consider (0,1), we see that the connected components of the graph
+induced by just the nodes colored 0 or 1 with a node colored 0 adjacent to
+E is
+
+{ D, F }
+
+and unfortunately, E is connected to both D and F, so swapping cannot work.
+
+For the pair (1,2), the connected components of the graph induced by just
+the nodes colored 1 or 2 with a node colored 1 adjacent to E is just
+
+{ C, D }
+
+but again, E is connected to both C and D, so swapping cannot work.
+
+For the pair (0,2) if we consider the connected components of the graph 
+induced by the nodes colored 0 or 2 with a node colored 0 adjacent to
+E, then the only one is
+
+{ F }
+
+Here there is no node colored 2 adjacent to E, so "swapping" the colors
+0 and 2 in the component will mean E is no longer connected to a node
+colored 0, and can be colored 0.  So our final coloring is
+
+0         1         2         2         1         0
+A,        B,        C,        F,        D,        E
+
+In this example, we only ever had one connected component in the
+graph induced by the (i,j) pair with a node colored i adjacent to
+our problem node E.  In general there might be many connected 
+components
+
+CC1
+CC2
+CC3
+...
+CCm
+
+We are assuming each of separate connected components has a node
+colored i that is adjacent to the problem node v, and that these are
+ALL of the connected components of that nature (connected components of
+the subgraph induced by the colors i and j with a node colored i
+adjacent to v).
+
+The interchange of the colors i and j within just those connected
+components can only work when NONE of them contains a node colored
+j that is adjacent to the problem node v.  This is why the construction
+of the set of connected components stops when a connected component
+is detected with nodes x colored i and y colored j that are both 
+adjacent to v.
+
+RLF
+===
+
+The last algorithm, Leighton's Recursive Largest First, is quite 
+different from the others, which are variations of sequential assignment.
+RLF proceeds in stages
+
+Stage 0 : determine a set of independent nodes (that is, no pair within
+the set is adjacent) and color them all 0; conceptually remove them 
+from the graph
+
+Stage 1 : determine a set of independent nodes from the remaining 
+uncolored nodes and color them all 1; conceptually remove them from the
+graph
+
+...
+
+Stage i : determine a set of independent nodes and color them all i;
+conceptually remove them from the graph
+
+...
+
+It continues like that until all nodes have been colored.
+
+If at every stage i, we consider the graph Gi to be the graph induced by
+the set of nodes that were not colored in earlier stages, then the nodes
+of Gi can be partitioned into three non-overlapping sets
+
+C - the nodes that have been colored i  (initially the empty set when the
+    stage starts)
+
+T - uncolored nodes that are not adjacent to any node colored i (initially
+    all of the nodes not yet colored in an earlier stage)
+
+U - uncolored nodes that are adjacent to a node colored i, and so cannot
+    be colored during this stage (initially empty when the stage starts,
+    since no node has yet been colored i)
+
+Stage i proceeds by selecting nodes from T to color i.  Suppose a node v
+is chosen.  Any nodes adjacent to v that were in T, will now have to moved
+to U.  T will eventually have to become empty, and then stage i is over.
+If U is empty, then all nodes are colored, but if U is not empty then for 
+the next stage, i + 1,
+
+C is initially empty
+
+T is initially what U is now
+
+U is initially empty
+
+At the start of a stage, the criteria for choosing the first node to color
+is the same as in LF: take the minimum node where a node p < a node q when
+p's count of uncolored adjacent nodes(not same as degree, since some of p's
+adjacent nodes may have been colored in earlier stages). If there are ties 
+on that, use the id to break the tie, so, if p's uncolored count is sames 
+as q's, the p < q when p.id < q.id.
+
+Once the first node is chosen, any adjacent nodes it has in T are moved to U.
+
+Then, while T has not been emptied, nodes are repeatedly chosen from T that are
+minimum w.r.t the ordering
+
+   p < q iff
+      (p's count of adjacent nodes in U > q's count of adjacent nodes in U)
+      or
+      (p's count of adjacent nodes in U = q's count of adjacent nodes in U and
+       p's count of adjacent nodes in T < q's count of adjacent nodes in T)
+      or
+      (p's count of adjacent nodes in U = q's count of adjacent nodes in U and
+       p's count of adjacent nodes in T = q's count of adjacent nodes in T and
+       p.id < q.id)
+
+So we again use the id to break ties.
+
+Let's see how this plays out for our example graph.  I will not list all of the
+counts, but will show the sets C, T, and U.
+
+Stage 0
+-------
+
+C = {}
+T = {A,B,C,D,E,F}
+U = {}
+
+Their degrees in the graph of this stage is the same as their degrees for the
+graph as a whole
+
+A    3 
+B    2   
+C    4
+D    4
+E    3
+F    2
+
+
+As in LF, C has the largest degree and smallest id, so it is chosen first,
+moving A, B, D, and E to U.
+
+C = {C}
+T = {F}
+U = {A,B,D,E}
+
+We have to choose F, since it is all that's left in T
+
+C = {C,F}
+T = {}
+U = {A,B,D,E}
+
+That ends stage 0, so C and F are colored 0.
+
+0  0
+C, F
+
+Stage 1
+-------
+
+C = {}
+T = {A,B,D,E}
+U = {}
+
+Now we are using only the degrees of these nodes in the graph they induce, which would be
+
+A    2 
+B    1   
+D    3
+E    2
+
+D has the largest degree, so it is chosen first to color 1, moving A, and E to U.
+
+C = {D}
+T = {B}
+U = {A,E}
+
+B is our only choice.
+
+C = {D,B}
+T = {}
+U = {A,E}
+
+So D and B are colored 1.
+
+0  0  1  1
+C, F, D, B
+
+Stage 2
+-------
+
+C = {}
+T = {A,E}
+U = {}
+
+The degrees in the graph for stage 2 are each 0
+
+A 0
+E 0
+
+So A is chosen.
+
+C = {A}
+T = {E}
+U = {}
+
+Then E is chosen
+
+C = {A,E}
+T = {}
+U = {}
+
+So A and E are colored 2.
+
+0  0  1  1  2  2
+C, F, D, B, A, E
+
+Since U is empty there is no need for a stage 3.
+
+For a differnent example, suppose our graph were instead
+
+A, B, C, D, E, F, G
+
+and nine edges
+
+{A,B}, {A,C}, {A,E}, {B,C}, {B,G}, {C,E}, {D,F}, {E,F}
+
+It looks like
+
+
+    G          C ------\          F ------- D
+     \        / \       \        /
+      \      /   \       \      /
+       \    /     \       \    /
+        \  /       \       \  /
+          B ------- A ------ E 
+
+
+The degrees are
+
+A    3 
+B    3   
+C    3
+D    1
+E    3  
+F    2
+G    1
+
+Stage 0
+-------
+
+C = {}
+T = {A,B,C,D,E,F,G}
+U = {}
+
+A is chosen ahead of B and C and E because all have the largest degree, but
+A's id is the smallest.
+
+C = {A}
+T = {D,F,G}
+U = {B,C,E}
+
+F's count of adjacent nodes in U, 1, is higher than D's, 0, so F is ahead of D,
+but G also has an adjacent node in U, tying F on that.  And G has no adjacent nodes in
+T, so G is chosen ahead of F.
+
+C = {A,G}
+T = {D,F}
+U = {B,C,E}
+
+Now F's count of adjacent nodes in U beats D's, so F is chosen, moving D to U.
+
+C = {A,G,F}
+T = {}
+U = {B,C,E,D}
+
+So A, G and F are colored 0.
+
+0  0  0
+A, G, F
+
+Stage 1
+-------
+
+C = {}
+T = {B,C,D,E}
+U = {}
+
+The degrees in this graph are
+
+B    1   
+C    2
+D    0
+E    1  
+
+C is chosen, since it has the largest degree, and that moves B and E to
+U.
+
+C = {C}
+T = {D}
+U = {B,E}
+
+Then D is chosen, 
+
+C = {C,D}
+T = {}
+U = {B,E}
+
+So C and D are colored 1
+
+0  0  0  1  1
+A, G, F, C, D
+
+Stage 2
+-------
+
+C = {}
+T = {B,E}
+U = {}
+
+The degrees in this graph are
+
+B    0   
+E    0  
+
+So, B will be chosen and then E, and both will be colored 2.
+
+0  0  0  1  1  2  2
+A, G, F, C, D, B, E
+
+That would complete the assignments.
+
+
+
+
+
+

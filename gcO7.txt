@@ -1,0 +1,64 @@
+
+For LF, the nodes are ordered
+5 16 0 8 12 22 3 10 11 18 19 23 1 2 7 13 
+15 17 20 4 9 21 24 6 14 
+
+LF used 4 colors.
+
+Nodes were colored as follows.
+Color 0: 3 4 5 6 12 16 17 18 24 
+Color 1: 0 1 8 11 14 19 22 23 
+Color 2: 7 9 10 15 
+Color 3: 2 13 20 21 
+Hit enter to continue.
+
+For SL, the nodes are ordered
+0 3 2 5 8 12 15 10 23 16 1 7 17 11 13 18 
+22 4 19 20 9 21 24 6 14 
+
+SL used 5 colors.
+
+Nodes were colored as follows.
+Color 0: 0 1 2 6 8 11 13 14 20 23 
+Color 1: 3 4 5 10 12 17 18 24 
+Color 2: 15 16 19 22 
+Color 3: 7 9 
+Color 4: 21 
+Hit enter to continue.
+
+For SLI, the nodes were initially ordered
+0 3 2 5 8 12 15 10 23 16 1 7 17 11 13 18 
+22 4 19 20 9 21 24 6 14 
+We will print the nodes that benefited from the swap.
+Node 7 benefited and was colored not Color 3 but rather Color 1
+
+SLI used 4 colors.
+
+Nodes were colored as follows.
+Color 0: 0 1 2 6 8 11 13 14 20 23 
+Color 1: 4 7 10 12 15 17 18 21 24 
+Color 2: 3 5 9 16 22 
+Color 3: 19 
+Hit enter to continue.
+
+In RLF method. We print each stage's nodes.
+Starting stage 0
+First node colored has id 5
+16 3 17 12 18 4 24 6 
+Starting stage 1
+First node colored has id 10
+19 21 22 1 11 8 14 
+Starting stage 2
+First node colored has id 0
+2 20 23 7 
+Starting stage 3
+First node colored has id 9
+13 15 
+
+RLF used 4 colors.
+
+Nodes were colored as follows.
+Color 0: 3 4 5 6 12 16 17 18 24 
+Color 1: 1 8 10 11 14 19 21 22 
+Color 2: 0 2 7 20 23 
+Color 3: 9 13 15 

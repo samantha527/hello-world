@@ -1,0 +1,107 @@
+
+For LF, the nodes are ordered
+16 13 1 4 5 23 26 3 11 20 31 37 8 17 34 38 
+0 9 7 12 14 18 40 10 15 22 28 33 35 36 2 29 
+30 39 24 27 32 21 19 6 25 
+
+LF used 10 colors.
+
+Nodes were colored as follows.
+Color 0: 5 12 16 28 
+Color 1: 6 11 13 20 25 39 
+Color 2: 1 4 7 19 
+Color 3: 15 23 34 37 
+Color 4: 0 9 17 26 
+Color 5: 3 29 38 40 
+Color 6: 8 24 27 31 
+Color 7: 2 14 18 21 32 33 
+Color 8: 10 22 35 
+Color 9: 30 36 
+Hit enter to continue.
+
+For SL, the nodes are ordered
+3 4 5 13 17 23 31 14 1 16 20 9 27 10 33 37 
+0 12 26 34 40 11 22 15 2 36 18 7 28 8 35 29 
+30 38 24 39 21 32 6 19 25 
+
+SL used 11 colors.
+
+Nodes were colored as follows.
+Color 0: 3 14 18 25 40 
+Color 1: 1 2 4 19 
+Color 2: 5 12 16 28 
+Color 3: 6 11 13 20 39 
+Color 4: 0 9 17 26 
+Color 5: 8 10 23 29 34 
+Color 6: 21 24 27 31 32 33 
+Color 7: 7 22 37 
+Color 8: 15 35 36 
+Color 9: 30 
+Color 10: 38 
+Hit enter to continue.
+
+For SLI, the nodes were initially ordered
+3 4 5 13 17 23 31 14 1 16 20 9 27 10 33 37 
+0 12 26 34 40 11 22 15 2 36 18 7 28 8 35 29 
+30 38 24 39 21 32 6 19 25 
+We will print the nodes that benefited from the swap.
+Node 15 benefited and was colored not Color 8 but rather Color 3
+Node 7 benefited and was colored not Color 9 but rather Color 4
+Node 32 benefited and was colored not Color 10 but rather Color 0
+
+SLI used 10 colors.
+
+Nodes were colored as follows.
+Color 0: 3 14 18 32 
+Color 1: 1 2 4 19 
+Color 2: 5 12 16 28 
+Color 3: 6 11 13 15 
+Color 4: 0 7 9 25 26 
+Color 5: 8 10 23 29 34 
+Color 6: 21 24 27 31 33 39 
+Color 7: 20 22 30 37 
+Color 8: 17 35 36 
+Color 9: 38 40 
+Hit enter to continue.
+
+In RLF method. We print each stage's nodes.
+Starting stage 0
+First node colored has id 16
+5 28 12 
+Starting stage 1
+First node colored has id 13
+11 20 39 6 25 
+Starting stage 2
+First node colored has id 4
+36 38 35 34 22 
+Starting stage 3
+First node colored has id 3
+10 29 40 
+Starting stage 4
+First node colored has id 37
+23 18 15 19 
+Starting stage 5
+First node colored has id 14
+2 30 21 32 
+Starting stage 6
+First node colored has id 31
+24 27 8 
+Starting stage 7
+First node colored has id 1
+7 0 9 
+Starting stage 8
+First node colored has id 17
+26 33 
+
+RLF used 9 colors.
+
+Nodes were colored as follows.
+Color 0: 5 12 16 28 
+Color 1: 6 11 13 20 25 39 
+Color 2: 4 22 34 35 36 38 
+Color 3: 3 10 29 40 
+Color 4: 15 18 19 23 37 
+Color 5: 2 14 21 30 32 
+Color 6: 8 24 27 31 
+Color 7: 0 1 7 9 
+Color 8: 17 26 33 

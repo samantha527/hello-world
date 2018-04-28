@@ -1,0 +1,512 @@
+COS 161   Implementation Notes for Graph Coloring Project
+
+IMPORTANT NOTE: The description of the algorithms here will be such that correct
+implementation will make them deterministic for our data sets.  For ease of our
+testing procedure, which is based on comparing your results to ours, it is 
+essential that these algorithms are deterministic.  So, please read the 
+discussion here carefully and implement the algorithms exactly as described here.
+
+Graphs are usually represented by adjacency sets.  Each node is given with the
+set of nodes it is adjacent to(that is, is joined to by an edge).
+
+This discussion refers to data members suggested in the classes associated with
+the project. We review those attributes here.
+
+NODE CLASS DATA MEMBERS USED BY THESE ALGORITHMS
+(all are instance specific)
+
+id: unique name for this node, its position in the original input file
+
+color: when colored, an integer >= 0, initially -1 to indicate not colored
+
+adjNodes:  TreeSet of Node for the nodes adjacent to this
+
+colorsOfAdjNodes: TreeSet of Integer holding the colors that have been used
+                  to color the nodes of adjNodes up to this point; initially
+                  empty;
+
+unsortedAdjCount: integer for SL that counts how many of this node's adjacent
+                  nodes have not yet been placed; initially same as size of
+                  adjNodes
+
+addedToAuxList: boolean used for SLI to control a search; initially false
+
+inT: boolean used in RLF to choose nodes to color; initially true;
+
+countOfUncoloredAdjacentNodes: integer used in RLF; initially same as
+                               size of adjNodes
+
+countOfAdjacentNodesInU: integer used in RLF; initially 0;
+
+The Node class methods are not complicated and are discussed in the class skeleton.
+
+
+GRAPH CLASS DATA MEMBERS 
+(all are instance specific)
+
+numberOfNodes: integer of the total number of nodes in the graph
+allNodes: an array of Node holding all the Node instances in the graph
+colorAssignments:  TreeMap<Integer,TreeSet<Integer>>  
+   for holding all the color assignments to display;
+   suppose the colors used were 0, 1, ..., k
+   Then the the colorAssignments will hold
+      (0, ordered set of the node ids of nodes assigned color 0)
+      (1, ordered set of the node ids of the nodes assigned color 1)
+      ...
+      (k, ordered set of the node ids of the nodes assigned color k)
+
+colorAssignments will have to be recalculated for each coloring algorithm,
+since they do not necessarily produce the same results.
+
+
+
+We consider each coloring algorithm in turn. I will reference the data
+members directly here, but you will need to used getters for private Node
+data members.  NOTE, ALL OF THESE ALGORITHMS ASSUME THAT THE color DATA
+MEMBERS OF ALL NODES ARE -1 AND THE colorAssignments MAP IS EMPTY.
+If the method is called after a different coloring method, then the code
+will need to reestablish that.
+
+I. void sequentiallyAssignColors()  
+
+This is the algorithm used for the nodes once they have been ordered.  LF and
+SL use this, but sort the nodes differently.
+
+   int maxColorUsed;
+
+   If not done already, initialize each Node's colorsOfAdjNodes
+   set to empty.s map to empty.
+
+   
+   set the color of allNodes[0] to 0;
+   for each Node v in allNodes[0].adjNodes do
+      add 0 to v.colorsOfAdjNodes;
+
+   create an entry in colorAssignments for color (0,{ allNodes[0].id })
+
+   maxColorUsed = 0;
+
+   for each index i from 1 to numberOfNodes - 1 do{
+      find the SMALLEST integer j such that j >= 0 and j is not
+      in allNodes[i].colorsOfAdjNodes(note, this IS NOT necessarily
+      the (maximum of that set) + 1; if the set were {1,2} the value
+      would be 0, not 3)
+
+      set the color of allNodes[i] to j;
+
+      for each Node w in allNodes[i].adjNodes do
+         add j to w.colorsOfAdjNodes
+
+      if j > maxColorUsed then{
+         create a new TreeSet<Integer> S and add allNodes[i].id to it;
+         put (j,S) in colorAssignments;
+         maxColorUsed = j;
+      }
+      else
+         update the data entry of colorAssignments for j to include 
+         allNodes[i].id
+
+   }
+
+
+II. void colorLF()
+
+   Assuming that Node correctly implements the compareTo operation to
+   make a node v less than a node w iff
+
+   v's degree > w's degree
+
+   or
+
+   their degrees are equal and v.id < w.id
+
+   then this is quite simple.
+
+   Use Arrays.sort to order the nodes in allNodes(should be already done
+   in the part 1 code)
+
+   sequentiallyAssignColors()
+
+
+During development, for the LF and SL algorithms, it is prudent to print out
+the sorted order of the nodes before doing the sequential assignment.  Part 1
+sorts as for LF, but the SL sort is a little different.  We supply test output
+that includes that information and other information that gives insight into 
+how our solution is processing the graphs so you can compare your program's 
+behavior with ours.  The final version you submit SHOULD NOT print this output.
+The easiest way to control the printing is to use a static boolean variable, 
+DEBUGGING.  When it is true, print out the extra data, when false, suppress it.
+
+
+II.  void colorSL()
+
+
+The sequential assignment part is the same, so the only difference is sorting
+the initial sequence of nodes.  In this case the ordering relation varies as
+the nodes are sorted. 
+
+Suppose there are N nodes in the allNodes array and that every Node has its 
+unsortedAdjCount data member initially equal to the size of its adjNodes data
+member.  The sorting algorithm proceeds as follows.
+
+for (int i = N-1; i > 0; i--){
+    scan the array from 0 to i to find the index j, 0 <= j <= i that
+    holds the MAXIMUM value of all the nodes in that range according to
+    the ordering given below;
+
+    if (j != i)
+       exchange the array components in i and j, that is swap the two Node
+       objects in the allNodes array
+
+    iterate over the nodes that are adjacent to allNodes[i] and decrement
+    their unsortedAdjCount data members to reflect that one of their adjacent
+    nodes has been sorted
+}
+
+Assuming all the color members have been set back to -1 and all the colorsOfAdjNodes
+set members are set back to empty, and colorAssignments has been set back to empty,
+sequentiallyAssignColors can be called after the sorting loop as for LF.
+
+When scanning for the maximum, you should use the ordering that says
+for two nodes, p and q,
+
+p < q  exactly when
+   p.unsortedAdjCount > q.unsortedAdjCount
+   or their unsortedAdjCount members are equal and p.id < q.id
+
+The id's of the nodes are used to resolve ties.  This is a total
+ordering because no two nodes will have the same id.  This is a slight variation
+of the LF algorithm, which does not modify the adjacency count while sorting.
+
+
+
+III. void colorSLI()
+
+This proceeds as for SL, except that the sequential assignment part of the
+algorithm needs to keep track of the largest color that has been assigned,
+and every time the algorithm would require that the next larger color should
+be used for the first time, it should check to see if an interchange can avoid
+using it.  You cannot use the colorsOfAdjacentNodes set because the colors are
+dynamically modified.
+
+Similarly to SL, 
+
+sort the allNodes array as for SL(the array should still be sorted, if you don't
+move anything around, but you will need to set all the colors of the nodes
+back to -1 and clear the colorAssignments data member)
+
+sequentiallyAssignColorsWithInterchange(); // see below
+
+for each Node v in allNodes do{
+  look up v.color in colorAssignments;
+  if it's not there then{
+     create a new set of Integer, S, and put v.id in S;
+     put (v.color, S) in colorAssignments;
+  }
+  else
+     add v.id to the entry for v.color
+}
+
+
+IV.  void sequentiallyAssignColorsWithInterchange()
+
+
+Because the colors can be changed after being assigned, the colorsOfAdjNodes
+set is not useful here.  This algorithm assumes all the colors are -1 and
+that all the addedToAuxList members are false and uses an additional integer,
+maxColorUsed.  Suppose there are N nodes in the allNodes array.  It is assumed
+that they have been sorted into SL order in the array.
+
+int maxColorUsed;
+boolean success;
+TreeSet<ConnectedComponent> allCCs;
+
+assign the color 0 to allNodes[0];
+set maxColorUsed to 0;
+
+for k from 1 to N-1 do{
+
+   iterate over allNodes[k].adjNodes to find the SMALLEST c
+   such that c >= 0 and c is not one of the colors of the nodes of
+   that set;
+
+   if (c > maxColorUsed){  // here is where we try to find an (i,j) pair to
+                           // exchange the colors; c should in fact be
+                           // maxColorUsed + 1 if it makes this test true
+
+      success = false;
+      for (i = 0; !success && i < maxColorUsed; i++){
+         for (j = i + 1; !success && j <= maxColorUsed; j++){
+            allCCs = calculateCCs(maxColorUsed,allNodes[k],i,j); // see below
+            if (allCCs != null){
+               success = true;
+               for each cc in allCCs do
+                  cc.performInterchange(i,j);
+               // change c so that i will be used to color the next node
+               c = i;
+            }
+         }
+      }
+      if (!success)
+         maxColorUsed = c;
+   }
+   color allNodes[k] with c;
+}
+
+
+V. TreeSet<ConnectedComponent> calculateCCs(int maxColor, Node currNode, int i, int j)
+
+Assumes that maxColor is the largest value that has been used so far, that currNode
+is the node that appears to force the use of maxColor + 1, and that 0 <= i < j <= maxColor
+are the current pair of colors that are being considered for swapping.
+
+This needs some local variables.
+
+Node v,w,z;
+
+boolean failed = false; // indicates whether swapping i and j avoids
+                        // using a larger color
+
+ConnectedComponent cc;
+
+List<Node> adjToCurrColoredI; // initialize to empty list
+
+List<Node> auxList; // initially empty
+
+TreeSet<ConnectedComponent> allCCs; // for the result; initialized to the empty set;
+
+for node v in currNode.adjNodes do
+   if v is colored i, add it to end of adjToCurrColoredI;
+
+
+while (not failed and adjToCurrColoredI is not empty){
+
+   remove the first node from adjToCurrClrdI and
+   place it in Node variable v;
+
+   if (not v.addedToAuxList){  // first time v has been encountered
+      cc = new ConnectedComponent(v);
+      set v.addedToAuxList to true to avoid considering it again;
+      for each z in v.adjNodes do
+         if z is colored j (it can't be colored i, since v is, and it
+            can't have been added to auxList, because if it had been,
+            then v would have been reached and added to auxList) then
+            if z is adjacent to currNode then
+               failed = true;
+            else{
+               add z to auxList;
+               set z.addedToAuxList to true;
+            }
+      // next, we add all nodes colored i or j that are reachable from
+      // v to the cc
+      while(not failed and auxList is not empty){
+         w = remove the first value from auxList;
+
+         cc.addNode(w);
+         for each z in w.adjNodes do
+            if (not failed && not z.addToAuxList)// first time to encounter z
+               if (z is colored j)
+                  if (z is adjacent to currNode)
+                     failed = true;
+                  else{
+                     set z addedToAuxList to true;
+                     add z to auxList;
+                  }
+               else
+                  if (z is colored i){
+                     set z addedToAuxList to true;
+                     add z to auxList;
+                  }
+      }         
+      if (not failed)
+         add cc to allCCs;
+   }// else v has already been added to auxList and so has been assigned to a
+    // different connected component
+}
+       
+// undo all the assignments to addedToAuxList
+// for all nodes in the cc's; 
+for (ConnectedComponent ccX : allCCs)
+   ccX.clearAddedToAuxList();
+
+if (failed){
+   // this resets the addedToAuxList values for the
+   // nodes that have been put on the current cc
+   cc.clearAddedToAuxList();
+
+   // this resets addedToAuxList values for the
+   // nodes that may have been left on auxList
+   for (Node vv : auxList)
+      set vv.addedToAuxList to false;
+   
+   // to signal failure
+   allCCs = null;
+}
+
+return allCCs;
+
+An argument for the correctness of this design would need to establish that
+
+A. if all of the addedToAuxList data members of nodes are false on entry,
+   then they are all returned to false before exit; you can draw a state diagram
+   to see that any node that was added to auxList(and so had its data member
+   set to true) will wind up in a place where it will get set back to false;
+   it has to wind up in one of
+
+   some member of allCCs;
+   the current component cc;
+   still be on auxList;
+
+   and if the search is successful, then cc will be the last value added
+   to allCCs and auxList will both be empty
+
+B. if there is no connected component in the induced subgraph determined
+   by nodes colored i and j that has nodes of each color adjacent to currNode,
+   then the method returns EXACTLY the distinct connected components of the
+   induced subgraph that have nodes adjacent to currNode that are colored i
+
+C. if there is at least one connected component in the induced subgraph
+   with nodes of each color adjacent to currNode, then null is returned
+
+
+
+IV.  void colorRLF()
+
+
+Conceptually, this method has three TreeSet<Node> local variables
+
+C : nodes that have been colored in an earlier stage;
+    We don't actually need to store this, however, because we can 
+    tell membership by examining the color value of a node; if it is
+    a nonnegative value that is < the current stage, it is in C, else
+    it is not in C
+
+T : nodes that have not been colored that are not adjacent to any node
+    that has been colored in the current stage; it is indicated by
+    color == -1 and the inT data member; since we need to iterate over
+    it, however, we do need a TreeSet to hold it.
+
+U : nodes that have not been colored that are adjacent to a node that
+    has been colored during the current stage; indicated by color == -1
+    and inT is false;  we need a TreeSet for this, to.
+
+These three sets have no overlap and cover all of the nodes, that is
+every node is in exactly one of these sets.  Initially C and U are empty,
+and all of the nodes are in T. 
+
+All nodes should have their color set to -1, their inT data members should
+be true and their countOfUncoloredAdjacentNodes and countOfAdjacentNodesInU
+data members initialized appropriately to the degree and 0 respectively.
+
+The algorithm should also have a local int variable, currentStage, for 
+the current color(== stage); it should initially be set to 0;
+
+
+Algorithm for coloring nodes during stage currentStage(an int that
+is initially 0)
+
+Assumes variables
+
+Node v,z,w;
+TreeSet<Node>T,U; // at stage 0, T should be all of the 
+                  // nodes and U should be empty; at
+                  // each later stage T is all of the yet uncolored nodes
+                  // and U is empty
+
+// the first loop just finds the first node to color currentStage
+for (v in T){
+   calculate the MINIMUM node w in T with respect to
+   the ordering that has Node p < Node q exactly when
+   the count of p's uncolored adjacent nodes is > the count of q's
+   uncolored adjacent nodes OR the counts are equal and 
+   p.id < q.id(again, the id is used to resolve ties)
+} // end of for (v in T)
+
+remove w from T and set w.inT to false
+color node w using color currentStage
+for each z in w.adjNodes do{
+   if z is not colored then{ // z must be in T if it's not colored
+                             // since U is empty at this point
+      z.inT = false;
+      z.countOfUncoloredAdjacentNodes--;// w has just been colored
+      move z from T to U, that is remove it from T and add it to U;
+      for each y in z.adjNodes do
+         if (y is not colored)// w is colored now and won't be affected
+            y.countOfAdjacentNodesInU++;// z was just added to U
+   }
+
+// this loop continues to select a node to be colored currentStage until
+// no more nodes can be colored currentStage, which is when T goes empty
+while (T is not empty){
+   iterate over T, finding a node w that is MINIMUM with respect to the
+   ordering that puts Node p < Node q when
+      count of p's adjacent nodes in U is > count of q's adjacent nodes in U
+      OR
+      those counts are the same, and count of p's adjacent nodes in T
+      is < the count of q's adjacent nodes in T 
+      OR 
+         both of those counts are the same and p.id < q.id
+        /* 
+           NOTE: for an uncolored node p, the count of p's adjacent nodes 
+           in T == (p.countOfUncoloredAdjacentNodes - p.countOfAdjacentNodesInU)
+           since every uncolored node is either in T or U
+ 
+           if p and q have the SAME value for the countOfAdjacentNodesInU
+           then the test for which has the fewer adjacent nodes in T
+           can be simplified to just examine the countOfUncoloredAdjacentNodes
+           data members for each, because for any uncolored node x 
+
+           x.countOfUncoloredAdjacentNodes == x.countOfAdjacentNodesInU +
+                                              (x's count of adjacent nodes in T)
+
+           so
+
+
+           x.countOfUncoloredAdjacentNodes - x.countOfAdjacentNodesInU ==
+                                              (x's count of adjacent nodes in T)
+
+           but if p's and q's countOfAdjacentNodesInU are the same, then
+
+           (p's count of adjacent nodes in T) < (q's count of adjacent nodes in T)
+
+           exactly when
+
+           p.countOfUncoloredAdjacentNodes < q.countOfUncoloredAdjacentNodes
+
+           The id is used for the final tie breaker if the other two counts are
+           the same.
+
+
+        */
+
+
+   remove that minimum node w from T
+   color w using color currentStage 
+   for (z in w's adjacency list)
+      if z is not colored then{  // it must be in T or U
+         z.countOfUncoloredAdjacentNodes--;
+         if (z.inT){ // this is why we need the inT field, so we don't
+                     // move z to U more than once and don't increase
+                     // the counts of adjacent nodes in U too many times
+            move z from T to U, that is remove it from T and add it to U
+            set z.inT to false;
+            for each y in z.adjNodes do
+               if (y is not colored and y is in T)// w, already colored, will fail this test
+                 y.countOfAdjacentNodesInU++;
+         }
+      }
+} // end of while (T is not empty) loop
+
+// T has gone empty; the stage for color currentStage is completed
+currentStage++;
+move all of the nodes in U to T, which you can effect just by swapping
+the U and T values;  you will need to iterate over the remaining uncolored nodes,
+marking each as inT,  and setting its count of adjacent nodes in U back to 0,
+as U will now be empty;
+
+
+
+If the new value of T is empty, then all nodes are colored, otherwise the program 
+should repeat another iteration of the code above.  As each stage must reduce the total
+number of uncolored nodes by at least one, eventually all nodes must be colored.
+

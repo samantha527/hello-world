@@ -1,0 +1,57 @@
+
+For LF, the nodes are ordered
+0 4 5 8 3 1 2 7 9 6 
+
+The algorithm used 3 colors to color 10 nodes.
+
+The nodes were colored as follows.
+Color 0: 0 3 4 
+
+Color 1: 1 2 5 6 7 
+
+Color 2: 8 9 
+
+
+For SL, the nodes are ordered
+0 1 8 5 3 2 4 7 9 6 
+
+The algorithm used 3 colors to color 10 nodes.
+
+The nodes were colored as follows.
+Color 0: 0 3 4 
+
+Color 1: 1 2 5 6 7 
+
+Color 2: 8 9 
+
+
+The algorithm used 3 colors to color 10 nodes.
+
+The nodes were colored as follows.
+Color 0: 0 3 4 
+
+Color 1: 1 2 5 6 7 
+
+Color 2: 8 9 
+
+
+In RLF method. We print each stage's nodes.
+Starting stage 0
+First node colored has id 0
+3 4 
+Starting stage 1
+First node colored has id 8
+2 6 7 
+Starting stage 2
+First node colored has id 1
+5 9 
+
+The algorithm used 3 colors to color 10 nodes.
+
+The nodes were colored as follows.
+Color 0: 0 3 4 
+
+Color 1: 2 6 7 8 
+
+Color 2: 1 5 9 
+
